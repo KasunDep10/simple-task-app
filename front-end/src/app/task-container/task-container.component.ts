@@ -30,4 +30,24 @@ export class TaskContainerComponent {
         txt.focus();
       });
   }
+
+  deleteTask(task: Task) {
+    this.http.delete(`http://localhost:8080/app/api/v1/tasks/${task.id}`)
+      .subscribe(data=>{
+        const index = this.taskList.indexOf(task);
+        this.taskList.splice(index, 1);
+      })
+  }
+
+  updateTask(task: Task) {
+    this.http.patch<Task>(`http://localhost:8080/app/api/v1/tasks/${task.id}`,
+      new Task(task.id, task.description,
+        (task.status === 'COMPLETED')? 'NOT_COMPLETED':'COMPLETED'))
+      .subscribe(()=>{
+        console.log(task);
+        const index = this.taskList.indexOf(task);
+        this.taskList.splice(index, 1);
+        this.taskList.push(task);
+      });
+  }
 }
